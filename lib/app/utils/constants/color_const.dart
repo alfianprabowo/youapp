@@ -25,3 +25,6 @@ const Color gradientBlue2Color = Color.fromRGBO(69, 153, 219, 1);
 const Color gradientBlue3Color = Color.fromRGBO(170, 218, 255, 1);
 
 const Color cardColor = Color.fromRGBO(22, 35, 41, 1);
+const Color profileCardColor = Color.fromRGBO(14, 25, 31, 1);
+
+const Color labelTextColor = Color.fromRGBO(255, 255, 255, 0.33);

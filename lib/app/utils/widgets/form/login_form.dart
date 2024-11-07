@@ -13,21 +13,22 @@ class LoginForm extends StatefulWidget {
   final Widget? suffixIcon;
   final String? defaultText;
   final String? labelText;
+  final String? errorText;
   final FocusNode? focusNode;
   final bool? obscureText;
   final TextEditingController? controller;
-  final Function? functionValidate;
+  final FormFieldValidator<String>? functionValidate;
   final String? parametersValidate;
   final TextInputAction? actionKeyboard;
   final Function? onSubmitField;
   final Function? onFieldTap;
+  final ValueChanged<String>? onChanged;
+  final FormFieldSetter<String>? onSaved;
   final int? maxLength;
   final int? minLines;
   final int? maxLines;
   final List<TextInputFormatter>? inputFormatters;
-  // final Callback? onChanged;
-
-  // const LoginForm({super.key});
+  final AutovalidateMode? autoValidate;
 
   const LoginForm({
     Key? key,
@@ -37,6 +38,7 @@ class LoginForm extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.defaultText,
+    this.errorText,
     this.focusNode,
     this.obscureText,
     this.controller,
@@ -45,12 +47,14 @@ class LoginForm extends StatefulWidget {
     this.actionKeyboard,
     this.onSubmitField,
     this.onFieldTap,
+    this.onChanged,
+    this.onSaved,
     this.maxLength,
     this.minLines,
     this.maxLines,
     this.labelText,
     this.inputFormatters,
-    // this.onChanged,
+    this.autoValidate,
   }) : super(key: key);
 
   @override
@@ -67,7 +71,6 @@ class _LoginFormState extends State<LoginForm> {
       textInputAction: widget.actionKeyboard,
       focusNode: widget.focusNode,
       initialValue: widget.defaultText,
-
       maxLength: widget.maxLength,
       minLines: widget.minLines ?? 1,
       maxLines: widget.maxLines ?? 1,
@@ -77,12 +80,14 @@ class _LoginFormState extends State<LoginForm> {
         fontWeight: FontWeight.w500,
         letterSpacing: 1.2,
       ),
+      autovalidateMode: widget.autoValidate ?? AutovalidateMode.disabled,
       decoration: InputDecoration(
         prefix: widget.prefix,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
         hintText: widget.hintText,
         labelText: widget.labelText,
+        errorText: widget.errorText,
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Color.fromRGBO(255, 255, 255, 0.06),
@@ -108,11 +113,12 @@ class _LoginFormState extends State<LoginForm> {
         isDense: true,
         errorStyle: const TextStyle(
           color: Colors.redAccent,
-          fontSize: 12.0,
+          fontSize: 10.0,
           fontWeight: FontWeight.w300,
           fontStyle: FontStyle.normal,
           letterSpacing: 1.2,
         ),
+        errorMaxLines: 2,
         errorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.redAccent),
         ),
@@ -123,13 +129,15 @@ class _LoginFormState extends State<LoginForm> {
       controller: widget.controller,
       validator: (value) {
         if (widget.functionValidate != null) {
-          String resultValidate = widget.functionValidate!(
+          String? resultValidate = widget.functionValidate!(
             value,
-            widget.parametersValidate,
           );
           return resultValidate;
         }
         return null;
+      },
+      onSaved: (value) {
+        if (widget.onSaved != null) widget.onSaved!.call(value);
       },
       onFieldSubmitted: (value) {
         if (widget.onSubmitField != null) widget.onSubmitField!();
@@ -137,9 +145,9 @@ class _LoginFormState extends State<LoginForm> {
       onTap: () {
         if (widget.onFieldTap != null) widget.onFieldTap!();
       },
-      // onChanged: (value) {
-      //   widget.onChanged!();
-      // },
+      onChanged: (value) {
+        if (widget.onChanged != null) widget.onChanged!.call(value);
+      },
       inputFormatters: widget.inputFormatters,
     );
   }

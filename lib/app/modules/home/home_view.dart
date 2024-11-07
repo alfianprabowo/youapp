@@ -42,7 +42,9 @@ class _HomeViewState extends State<HomeView> {
       extendBody: true,
       resizeToAvoidBottomInset: false,
       body: Column(
-        children: [],
+        children: [
+          Text("HOME"),
+        ],
       ),
     );
   }

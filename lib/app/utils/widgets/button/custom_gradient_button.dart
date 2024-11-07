@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/color_const.dart';
+import '../../helper/gradient_gold.dart';
 
 class CustomGradientButton extends StatelessWidget {
   // const CustomGradientButton({super.key});
@@ -17,21 +18,12 @@ class CustomGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Color> gradientColors = [
-      gradientGold1Color,
-      gradientGold2Color,
-      gradientGold3Color,
-      gradientGold4Color,
-      gradientGold5Color,
-      gradientGold3Color,
-      gradientGold5Color,
-    ];
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (Rect bounds) => LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: gradientColors,
+        colors: listGradientGoldColors,
       ).createShader(bounds),
       child: IconButton(
         icon: Icon(

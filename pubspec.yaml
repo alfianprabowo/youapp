@@ -13,12 +13,29 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.6
+  cached_network_image: ^3.4.1
+  flutter_screenutil: ^5.9.3
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  dio: ^5.7.0
+  freezed_annotation: ^2.4.4
+  pretty_dio_logger: ^1.4.0
+  retrofit: ^4.4.1
+  json_annotation: ^4.9.0
+  hydrated_bloc: ^9.1.5
+  http: ^1.2.2
+  equatable: ^2.0.5
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^3.0.0
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.11
+  retrofit_generator: ^8.2.1
 
 # The following section is specific to Flutter packages.
 flutter:

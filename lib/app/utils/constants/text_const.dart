@@ -24,6 +24,7 @@ class TextConst {
   static const String createUsername = "Create Username";
   static const String createPassword = "Create Password";
 
+  static const String dateFormat = "DD MM YYYY";
   static const String displayName = "Display Name";
 
   static const String email = "Email";

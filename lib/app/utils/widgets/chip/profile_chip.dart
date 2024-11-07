@@ -25,13 +25,15 @@ class ProfileChip extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
       child: Row(
         children: [
-          Icon(
-            icon!,
-            size: 20,
-          ),
+          icon != null
+              ? Icon(
+                  icon!,
+                  size: 20,
+                )
+              : Container(),
           const SizedBox(width: LayoutConst.spaceM),
           CustomText(
-            text: text!,
+            text: text ?? "",
             size: 14,
             weight: FontWeight.w600,
           ),

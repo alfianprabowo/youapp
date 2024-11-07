@@ -3,6 +3,7 @@ import 'package:youapp/app/modules/home/home_view.dart';
 import 'package:youapp/app/modules/login/views/login_view.dart';
 import 'package:youapp/app/utils/constants/color_const.dart';
 
+import 'config/routes/page_routes.dart';
 import 'config/themes/style.dart';
 
 void main() {
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       darkTheme: appTheme,
       themeMode: ThemeMode.dark,
+      routes: PageRoutes().routes(),
+
       home: LoginView(),
     );
   }
