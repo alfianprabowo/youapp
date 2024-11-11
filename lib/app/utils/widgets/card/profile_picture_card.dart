@@ -12,9 +12,7 @@ class ProfilePictureCard extends StatefulWidget {
   final String? image;
   final String? gender;
   final String? horoscope;
-  final IconData? horoscopeIcon;
   final String? zodiac;
-  final IconData? zodiacIcon;
 
   const ProfilePictureCard({
     Key? key,
@@ -24,8 +22,6 @@ class ProfilePictureCard extends StatefulWidget {
     this.gender,
     this.horoscope,
     this.zodiac,
-    this.horoscopeIcon,
-    this.zodiacIcon,
   }) : super(key: key);
 
   @override
@@ -46,33 +42,31 @@ class _ProfilePictureCardState extends State<ProfilePictureCard> {
         borderRadius: BorderRadius.all(
           Radius.circular(LayoutConst.spaceL),
         ),
-        // image: DecorationImage(
-        //   image: AssetImage("assets/images/porsche.jpg"),
-        //   fit: BoxFit.cover,
-        // ),
         color: cardColor,
       ),
       child: Stack(
         children: <Widget>[
-          CachedNetworkImage(
-            imageUrl: widget.image ?? "",
-            imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-                // shape: BoxShape.values[0.2],
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(LayoutConst.spaceL),
-                ),
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: imageProvider,
-                ),
-              ),
-            ),
-            placeholder: (context, url) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            errorWidget: (context, url, error) => Container(),
-          ),
+          widget.image != null
+              ? CachedNetworkImage(
+                  imageUrl: widget.image ?? "",
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      // shape: BoxShape.values[0.2],
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(LayoutConst.spaceL),
+                      ),
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: imageProvider,
+                      ),
+                    ),
+                  ),
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Container(),
+                )
+              : Container(),
 
           // Positioned(
           //   right: 0.0,
@@ -96,13 +90,13 @@ class _ProfilePictureCardState extends State<ProfilePictureCard> {
                 children: [
                   Row(
                     children: [
-                      widget.username != null
+                      widget.username != ""
                           ? CustomText(
                               text: "@${widget.username},",
                             )
                           : Container(),
                       const SizedBox(width: LayoutConst.spaceM),
-                      widget.age != null
+                      widget.age != 0
                           ? CustomText(
                               text: "${widget.age}",
                             )
@@ -111,7 +105,7 @@ class _ProfilePictureCardState extends State<ProfilePictureCard> {
                   ),
                   widget.gender != null
                       ? CustomText(
-                          text: "${widget.gender}",
+                          text: widget.gender ?? "",
                           size: 13,
                           weight: FontWeight.w500,
                         )
@@ -119,21 +113,57 @@ class _ProfilePictureCardState extends State<ProfilePictureCard> {
                   const SizedBox(height: LayoutConst.spaceM),
                   Row(
                     children: [
+                      // widget.horoscope != "Error" || widget.horoscope != ""
                       widget.horoscope != null
                           ? ProfileChip(
-                              icon: widget.horoscopeIcon!,
+                              icon: widget.horoscope ?? "",
                               text: "${widget.horoscope}",
                             )
                           : Container(),
                       const SizedBox(width: LayoutConst.spaceL),
                       widget.zodiac != null
                           ? ProfileChip(
-                              icon: widget.zodiacIcon!,
+                              icon: widget.zodiac ?? "",
                               text: "${widget.zodiac}",
                             )
                           : Container(),
                     ],
-                  ),
+                  )
+                  // widget.horoscope != "" || widget.horoscope != "Error" || widget.zodiac != "" || widget.zodiac != "Error"
+                  //     ? Row(
+                  //         children: [
+                  //           ProfileChip(
+                  //             icon: widget.horoscope ?? "",
+                  //             text: "${widget.horoscope}",
+                  //           ),
+                  //           const SizedBox(width: LayoutConst.spaceL),
+                  //           ProfileChip(
+                  //             icon: widget.zodiac ?? "",
+                  //             text: "${widget.zodiac}",
+                  //           )
+                  //         ],
+                  //       )
+                  //     : Container(),
+
+                  // widget.horoscope != null || widget.horoscope != ""
+                  //     ? Row(
+                  //         children: [
+                  //           widget.horoscope != null
+                  //               ? ProfileChip(
+                  //                   icon: widget.horoscope ?? "",
+                  //                   text: "${widget.horoscope}",
+                  //                 )
+                  //               : Container(),
+                  //           const SizedBox(width: LayoutConst.spaceL),
+                  //           widget.zodiac != null
+                  //               ? ProfileChip(
+                  //                   icon: widget.zodiac ?? "",
+                  //                   text: "${widget.zodiac}",
+                  //                 )
+                  //               : Container(),
+                  //         ],
+                  //       )
+                  //     : Container(),
                 ],
               ),
             ),

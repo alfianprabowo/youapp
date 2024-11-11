@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youapp/app/modules/login/cubit/login_cubit.dart';
 import 'package:youapp/app/modules/login/cubit/login_state.dart';
 import 'package:youapp/app/modules/login/repositories/login_repository.dart';
-import 'package:youapp/app/modules/profile/views/profile_view.dart';
+import 'package:youapp/app/modules/profile/home/views/profile_view.dart';
 import 'package:youapp/app/utils/constants/layout_const.dart';
 import 'package:youapp/app/utils/constants/text_const.dart';
-import 'package:youapp/app/utils/helper/gradient_gold.dart';
+import 'package:youapp/app/utils/helper/gradient_color.dart';
 import 'package:youapp/app/utils/layout/login_layout.dart';
 import 'package:youapp/app/utils/widgets/button/primary_button.dart';
 import 'package:youapp/app/utils/widgets/form/login_form.dart';
@@ -39,7 +39,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    // setLoginState(false);
     super.initState();
     passwordVisible = true;
   }
@@ -53,7 +52,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // void Function(String?) password;
     return LoginLayout(
       child: BlocProvider<LoginCubit>(
         create: (context) => LoginCubit(LoginRepository(context)),
@@ -90,6 +88,7 @@ class _LoginViewState extends State<LoginView> {
                       onSaved: (val) {
                         email = val!;
                       },
+                      actionKeyboard: TextInputAction.next,
                     ),
                     const SizedBox(height: LayoutConst.spaceL),
 
@@ -124,6 +123,7 @@ class _LoginViewState extends State<LoginView> {
                       onSaved: (value) {
                         password = value!;
                       },
+                      actionKeyboard: TextInputAction.done,
                     ),
                     const SizedBox(height: LayoutConst.spaceXL),
 
@@ -133,10 +133,22 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState?.save();
+                          // BlocProvider.of<LoginCubit>(context).login(
+                          //   "prabowo",
+                          //   "prabowo123",
+                          // );
                           BlocProvider.of<LoginCubit>(context).login(
-                            email,
-                            password,
+                            "bowo",
+                            "bowo1234",
                           );
+                          // BlocProvider.of<LoginCubit>(context).login(
+                          //   "set",
+                          //   "test1234",
+                          // );
+                          // BlocProvider.of<LoginCubit>(context).login(
+                          //   email,
+                          //   password,
+                          // );
                         }
                       },
                     ),
@@ -181,7 +193,6 @@ class _LoginViewState extends State<LoginView> {
                     PageRoutes.profileView,
                     (Route<dynamic> route) => false,
                   );
-                  // SnackBar(content: Text(" ${state.successMessage}"));
                 } else if (state is FailureLoginState) {
                   if (state.errorMessage != null) {
                     shortSnackBar(context, state.errorMessage!);
@@ -192,10 +203,9 @@ class _LoginViewState extends State<LoginView> {
             BlocConsumer<LoginCubit, LoginState>(
               builder: (context, state) {
                 if (state is LoadingLoginState) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    color: Colors.black.withOpacity(0.1),
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),

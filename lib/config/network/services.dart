@@ -89,4 +89,9 @@ class Network {
     RestClient client = await getRestClient();
     return client.updateProfile(data.toJson());
   }
+
+  Future<ResponseStatus> updateInterest(User data) async {
+    RestClient client = await getRestClient();
+    return client.updateProfile(data.toJson());
+  }
 }

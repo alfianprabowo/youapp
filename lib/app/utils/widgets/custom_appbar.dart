@@ -5,11 +5,13 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   // const CustomAppbar({super.key});
   final String username;
   final PreferredSizeWidget? bottomTabBar;
+  final VoidCallback? acionPressed;
 
   const CustomAppbar({
     Key? key,
     required this.username,
     this.bottomTabBar,
+    this.acionPressed,
   }) : super(key: key);
 
   @override
@@ -29,13 +31,20 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
-        IconButton(
+        PopupMenuButton<String>(
           icon: const Icon(
             Icons.more_horiz,
             color: Colors.white,
           ),
-          onPressed: () {},
-        )
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              child: const Text('Logout'),
+              onTap: () {
+                acionPressed!.call();
+              },
+            ),
+          ],
+        ),
       ],
       bottom: bottomTabBar,
     );

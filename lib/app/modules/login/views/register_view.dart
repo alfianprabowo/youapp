@@ -7,7 +7,7 @@ import 'package:youapp/app/utils/helper/form_validator.dart';
 import '../../../../config/routes/page_routes.dart';
 import '../../../utils/constants/layout_const.dart';
 import '../../../utils/constants/text_const.dart';
-import '../../../utils/helper/gradient_gold.dart';
+import '../../../utils/helper/gradient_color.dart';
 import '../../../utils/layout/login_layout.dart';
 import '../../../utils/widgets/button/primary_button.dart';
 import '../../../utils/widgets/form/login_form.dart';
@@ -103,6 +103,7 @@ class _RegisterViewState extends State<RegisterView> {
                       onSaved: (val) {
                         email = val!;
                       },
+                      actionKeyboard: TextInputAction.next,
                     ),
                     const SizedBox(height: LayoutConst.spaceL),
 
@@ -123,6 +124,7 @@ class _RegisterViewState extends State<RegisterView> {
                       onSaved: (val) {
                         username = val!;
                       },
+                      actionKeyboard: TextInputAction.next,
                     ),
                     const SizedBox(height: LayoutConst.spaceL),
 
@@ -160,6 +162,7 @@ class _RegisterViewState extends State<RegisterView> {
                       onSaved: (value) {
                         password = value!;
                       },
+                      actionKeyboard: TextInputAction.next,
                     ),
                     const SizedBox(height: LayoutConst.spaceL),
 
@@ -200,6 +203,7 @@ class _RegisterViewState extends State<RegisterView> {
                       onSaved: (value) {
                         confirmPassword = value!;
                       },
+                      actionKeyboard: TextInputAction.done,
                     ),
                     const SizedBox(height: LayoutConst.spaceXL),
 

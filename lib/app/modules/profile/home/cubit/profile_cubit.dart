@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youapp/app/modules/profile/repositories/profile_repository.dart';
-import 'package:youapp/app/utils/constants/app_const.dart';
+import 'package:youapp/app/modules/profile/home/repositories/profile_repository.dart';
+import 'package:youapp/app/utils/helper/calculate_age.dart';
 import 'package:youapp/config/environment/secure_storage_service.dart';
 import 'package:youapp/config/network/response_status.dart';
 
-import '../../../data/models/user.dart';
+import '../../../../data/models/user.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -21,26 +21,20 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   getProfile() async {
     emit(LoadingProfileState());
+
     try {
       final User userData = await loadUserData();
-
+      int? age;
+      if (userData.birthday == "" || userData.birthday == null) {
+        age = 0;
+      } else {
+        age = calculateAge(userData.birthday!);
+      }
       emit(
-        // InitialProfileState(
-        //   username: "username",
-        //   age: 0,
-        //   birthday: "userData.birthday",
-        //   horoscope: "",
-        //   horoscopeIcon: "",
-        //   zodiac: "",
-        //   zodiacIcon: "",
-        //   interests: [],
-        //   height: 0,
-        //   weight: 0,
-        // ),
         InitialProfileState(
           username: userData.username ?? "",
           name: userData.name ?? "",
-          age: 0,
+          age: age ?? 0,
           birthday: userData.birthday ?? "",
           horoscope: userData.horoscope ?? "",
           horoscopeIcon: "",
@@ -74,6 +68,16 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<User> createProfile(User user) async {
     User userData = const User();
     final ResponseStatus response = await profileRepository.createProfile(user);
+    if (response.data != null && response.data.isNotEmpty) {
+      Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
+      userData = User.fromJson(l);
+    }
+    return userData;
+  }
+
+  Future<User> updateProfile(User user) async {
+    User userData = const User();
+    final ResponseStatus response = await profileRepository.updateProfile(user);
     if (response.data != null && response.data.isNotEmpty) {
       Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
       userData = User.fromJson(l);

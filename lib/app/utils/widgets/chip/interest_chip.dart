@@ -4,12 +4,10 @@ import '../text/custom_text.dart';
 
 class InterestChip extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
 
   const InterestChip({
     Key? key,
     required this.text,
-    required this.onPressed,
   }) : super(key: key);
 
   @override

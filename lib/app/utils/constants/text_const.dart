@@ -63,6 +63,7 @@ class TextConst {
   static const String registerHere = "Register here";
 
   static const String sagitarius = "Sagitarius";
+  static const String save = "Save";
   static const String saveUpdate = "Save & Update";
   static const String scorpion = "Scorpion";
   static const String scorpius = "Scorpius";

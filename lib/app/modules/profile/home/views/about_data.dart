@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:youapp/app/utils/constants/text_const.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
 
-import '../../../utils/constants/layout_const.dart';
+import '../../../../utils/constants/layout_const.dart';
+import '../../../../utils/helper/calculate_age.dart';
 
 class AboutData extends StatelessWidget {
-  // ! USER DATA
-  final String birthday, horoscope, zodiac;
-  final int height, weight;
-  final int age;
+  final String? birthday, horoscope, zodiac;
+  final int? height, weight;
+  final int? age;
 
   const AboutData({
     Key? key,
-    required this.birthday,
-    required this.age,
-    required this.horoscope,
-    required this.zodiac,
-    required this.height,
-    required this.weight,
+    this.birthday,
+    this.age,
+    this.horoscope,
+    this.zodiac,
+    this.height,
+    this.weight,
   }) : super(key: key);
 
   @override
@@ -54,7 +54,7 @@ class AboutData extends StatelessWidget {
               color: Color.fromRGBO(255, 255, 255, 0.33),
             ),
             CustomText(
-              text: horoscope,
+              text: horoscope!,
               size: 13,
               weight: FontWeight.w500,
             ),
@@ -73,7 +73,7 @@ class AboutData extends StatelessWidget {
               color: Color.fromRGBO(255, 255, 255, 0.33),
             ),
             CustomText(
-              text: zodiac,
+              text: zodiac!,
               size: 13,
               weight: FontWeight.w500,
             ),
@@ -92,7 +92,7 @@ class AboutData extends StatelessWidget {
               color: Color.fromRGBO(255, 255, 255, 0.33),
             ),
             CustomText(
-              text: "$height cm",
+              text: "${height!} cm",
               size: 13,
               weight: FontWeight.w500,
             ),
@@ -111,7 +111,7 @@ class AboutData extends StatelessWidget {
               color: Color.fromRGBO(255, 255, 255, 0.33),
             ),
             CustomText(
-              text: "$weight kg",
+              text: "${weight!} kg",
               size: 13,
               weight: FontWeight.w500,
             ),

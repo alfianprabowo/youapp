@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:youapp/config/network/response_status.dart';
 import 'package:youapp/config/network/services.dart';
 
-import '../../../data/models/user.dart';
+import '../../../../data/models/user.dart';
 
 abstract class IProfileRepository {
   Future<ResponseStatus> getProfile();

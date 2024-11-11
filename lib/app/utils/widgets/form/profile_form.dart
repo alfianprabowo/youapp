@@ -7,23 +7,27 @@ import '../../constants/layout_const.dart';
 class ProfileForm extends StatefulWidget {
   final TextInputType? textInputType;
   final String? hintText;
-
   final Widget? prefixIcon;
   final Text? prefix;
+  final String? suffixText;
   final Widget? suffixIcon;
   final String? defaultText;
   final String? labelText;
   final FocusNode? focusNode;
   final TextEditingController? controller;
-  final Function? functionValidate;
+  final FormFieldValidator<String>? functionValidate;
   final String? parametersValidate;
   final TextInputAction? actionKeyboard;
   final Function? onSubmitField;
   final Function? onFieldTap;
+  final ValueChanged<String>? onChanged;
+  final FormFieldSetter<String>? onSaved;
   final int? maxLength;
   final int? minLines;
   final int? maxLines;
   final List<TextInputFormatter>? inputFormatters;
+  final AutovalidateMode? autoValidate;
+  final bool? readOnly;
 
   const ProfileForm({
     Key? key,
@@ -32,6 +36,7 @@ class ProfileForm extends StatefulWidget {
     this.prefixIcon,
     this.prefix,
     this.suffixIcon,
+    this.suffixText,
     this.defaultText,
     this.labelText,
     this.focusNode,
@@ -45,6 +50,10 @@ class ProfileForm extends StatefulWidget {
     this.minLines,
     this.maxLines,
     this.inputFormatters,
+    this.onChanged,
+    this.onSaved,
+    this.autoValidate,
+    this.readOnly,
   }) : super(key: key);
 
   @override
@@ -75,8 +84,16 @@ class _ProfileFormState extends State<ProfileForm> {
         prefix: widget.prefix,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
+        suffixText: widget.suffixText,
         hintText: widget.hintText,
         labelText: widget.labelText,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 13.0,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 1.2,
+        ),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Color.fromRGBO(255, 255, 255, 0.22),
@@ -115,12 +132,12 @@ class _ProfileFormState extends State<ProfileForm> {
           borderSide: BorderSide(color: Colors.redAccent),
         ),
       ),
+      readOnly: widget.readOnly ?? false,
       controller: widget.controller,
       validator: (value) {
         if (widget.functionValidate != null) {
-          String resultValidate = widget.functionValidate!(
+          String? resultValidate = widget.functionValidate!(
             value,
-            widget.parametersValidate,
           );
           return resultValidate;
         }
@@ -132,9 +149,12 @@ class _ProfileFormState extends State<ProfileForm> {
       onTap: () {
         if (widget.onFieldTap != null) widget.onFieldTap!();
       },
-      // onChanged: (value) {
-      //   widget.onChanged!();
-      // },
+      onSaved: (value) {
+        if (widget.onSaved != null) widget.onSaved!.call(value);
+      },
+      onChanged: (value) {
+        if (widget.onChanged != null) widget.onChanged!.call(value);
+      },
       inputFormatters: widget.inputFormatters,
     );
   }

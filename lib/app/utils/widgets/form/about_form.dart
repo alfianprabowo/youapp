@@ -4,13 +4,17 @@ import 'package:youapp/app/utils/constants/text_const.dart';
 import 'package:youapp/app/utils/widgets/icon/custom_icon.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
 
+import '../../../data/models/user.dart';
 import '../../constants/layout_const.dart';
 import 'profile_form.dart';
 
 class AboutForm extends StatefulWidget {
-  // ! USER DATA
+  final User? user;
 
-  const AboutForm({Key? key}) : super(key: key);
+  const AboutForm({
+    Key? key,
+    this.user,
+  }) : super(key: key);
 
   @override
   State<AboutForm> createState() => _AboutFormState();
@@ -54,8 +58,8 @@ class _AboutFormState extends State<AboutForm> {
         // > NAME
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,12 +73,24 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
-                  ProfileForm(
-                    hintText: TextConst.enterName,
-                  ),
+                  widget.user!.name != ""
+                      ? ProfileForm(
+                          defaultText: widget.user!.name,
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                      : ProfileForm(
+                          hintText: TextConst.enterName,
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                  // ProfileForm(
+                  //   hintText: widget.user!.name ?? TextConst.enterName,
+                  //   actionKeyboard: TextInputAction.next,
+                  // ),
                 ],
               ),
             ),
@@ -85,8 +101,8 @@ class _AboutFormState extends State<AboutForm> {
         // > GENDER
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,7 +116,7 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
                   // ! CHANGE TO DROPDOWN
@@ -110,6 +126,7 @@ class _AboutFormState extends State<AboutForm> {
                       onPressed: () {},
                       icon: const Icon(Icons.arrow_drop_down),
                     ),
+                    readOnly: true,
                   ),
                 ],
               ),
@@ -121,8 +138,8 @@ class _AboutFormState extends State<AboutForm> {
         // > BIRTHDAY
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,13 +153,29 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
                   // ! CHANGE TO BUTTON
-                  ProfileForm(
-                    hintText: TextConst.dateFormat,
-                  ),
+                  widget.user!.birthday != ""
+                      ? ProfileForm(
+                          defaultText: widget.user!.birthday.toString(),
+                          onChanged: (value) {},
+                          readOnly: true,
+                          onFieldTap: () {},
+                        )
+                      : ProfileForm(
+                          hintText: TextConst.dateFormat,
+                          onChanged: (value) {},
+                          readOnly: true,
+                        )
+                  // ProfileForm(
+                  //   hintText: widget.user!.birthday ?? TextConst.dateFormat,
+                  //   readOnly: true,
+                  //   onFieldTap: () {
+                  //     debugPrint("------- birthday tapped");
+                  //   },
+                  // ),
                 ],
               ),
             ),
@@ -153,8 +186,8 @@ class _AboutFormState extends State<AboutForm> {
         // > HOROSCOPE
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -168,13 +201,25 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
                   // ! GET FROM GETPROFILE
-                  ProfileForm(
-                    hintText: "--",
-                  ),
+                  widget.user!.horoscope != ""
+                      ? ProfileForm(
+                          defaultText: widget.user!.horoscope,
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                      : ProfileForm(
+                          hintText: "--",
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                  // ProfileForm(
+                  //   hintText: widget.user!.horoscope ?? "--",
+                  //   readOnly: true,
+                  // ),
                 ],
               ),
             ),
@@ -185,8 +230,8 @@ class _AboutFormState extends State<AboutForm> {
         // > ZODIAC
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -200,13 +245,25 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
                   // ! GET FROM GETPROFILE
-                  ProfileForm(
-                    hintText: "--",
-                  ),
+                  widget.user!.zodiac != ""
+                      ? ProfileForm(
+                          defaultText: widget.user!.zodiac,
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                      : ProfileForm(
+                          hintText: "--",
+                          onChanged: (value) {},
+                          actionKeyboard: TextInputAction.done,
+                        )
+                  // ProfileForm(
+                  //   hintText: widget.user!.zodiac ?? "--",
+                  //   readOnly: true,
+                  // ),
                 ],
               ),
             ),
@@ -217,8 +274,8 @@ class _AboutFormState extends State<AboutForm> {
         // > HEIGHT
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -232,12 +289,24 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
-                  ProfileForm(
-                    hintText: TextConst.addHeight,
-                  ),
+                  widget.user!.height != 0
+                      ? ProfileForm(
+                          defaultText: widget.user!.height.toString(),
+                          onChanged: (value) {},
+                          textInputType: TextInputType.number,
+                          actionKeyboard: TextInputAction.next,
+                          suffixText: "cm",
+                        )
+                      : ProfileForm(
+                          hintText: TextConst.addHeight,
+                          onChanged: (value) {},
+                          textInputType: TextInputType.number,
+                          actionKeyboard: TextInputAction.next,
+                          suffixText: "cm",
+                        )
                 ],
               ),
             ),
@@ -248,8 +317,8 @@ class _AboutFormState extends State<AboutForm> {
         // > WEIGHT
         Row(
           children: [
-            Expanded(
-              flex: 1,
+            const Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -263,12 +332,24 @@ class _AboutFormState extends State<AboutForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 children: [
-                  ProfileForm(
-                    hintText: TextConst.addWeight,
-                  ),
+                  widget.user!.weight != 0
+                      ? ProfileForm(
+                          defaultText: widget.user!.weight.toString(),
+                          onChanged: (value) {},
+                          textInputType: TextInputType.number,
+                          actionKeyboard: TextInputAction.done,
+                          suffixText: "kg",
+                        )
+                      : ProfileForm(
+                          hintText: TextConst.addWeight,
+                          onChanged: (value) {},
+                          textInputType: TextInputType.number,
+                          actionKeyboard: TextInputAction.done,
+                          suffixText: "kg",
+                        )
                 ],
               ),
             ),

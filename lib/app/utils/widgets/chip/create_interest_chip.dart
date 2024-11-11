@@ -26,6 +26,8 @@ class _CreateInterestChipState extends State<CreateInterestChip> {
       ),
       padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CustomText(
             text: widget.text,

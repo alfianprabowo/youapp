@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/color_const.dart';
-import '../../helper/gradient_gold.dart';
+import '../../helper/gradient_color.dart';
 
 class CustomGradientButton extends StatelessWidget {
   // const CustomGradientButton({super.key});

@@ -8,6 +8,7 @@ setLoginState(bool login) {
 // URLS
 const BASE_URL = "https://techtest.youapp.ai/";
 
+const appName = "Youapp";
 const loginUsername = "username";
 const loginEmail = "email";
 const loginName = "name";

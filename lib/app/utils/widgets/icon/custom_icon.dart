@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../helper/gradient_gold.dart';
+import '../../helper/gradient_color.dart';
 
 class CustomIcon extends StatelessWidget {
   final IconData icon;

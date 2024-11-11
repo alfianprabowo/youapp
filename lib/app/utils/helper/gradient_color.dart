@@ -21,3 +21,15 @@ List<Color> listGradientGoldColors = [
   gradientGold3Color,
   gradientGold5Color,
 ];
+
+Gradient gradientblue = const LinearGradient(colors: [
+  gradientBlue1Color,
+  gradientBlue2Color,
+  gradientBlue3Color,
+]);
+
+List<Color> listGradientBlueColors = [
+  gradientBlue1Color,
+  gradientBlue2Color,
+  gradientBlue3Color,
+];

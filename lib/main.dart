@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:youapp/app/modules/home/home_view.dart';
 import 'package:youapp/app/modules/login/views/login_view.dart';
-import 'package:youapp/app/utils/constants/color_const.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:youapp/app/modules/splash_screen/views/splash_screen_view.dart';
 
 import 'config/routes/page_routes.dart';
 import 'config/themes/style.dart';
@@ -22,8 +22,16 @@ class MyApp extends StatelessWidget {
       darkTheme: appTheme,
       themeMode: ThemeMode.dark,
       routes: PageRoutes().routes(),
-
-      home: LoginView(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        // Locale('en'),
+        Locale('id'),
+      ],
+      home: const SplasScreenView(),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youapp/app/modules/profile/cubit/profile_state.dart';
-import 'package:youapp/app/modules/profile/repositories/profile_repository.dart';
-import 'package:youapp/app/modules/profile/views/about_data.dart';
+import 'package:intl/intl.dart';
+import 'package:youapp/app/modules/profile/home/cubit/profile_state.dart';
+import 'package:youapp/app/modules/profile/home/repositories/profile_repository.dart';
+import 'package:youapp/app/modules/profile/home/views/about_data.dart';
 import 'package:youapp/app/utils/constants/layout_const.dart';
 import 'package:youapp/app/utils/constants/text_const.dart';
 import 'package:youapp/app/utils/widgets/card/profile_card.dart';
@@ -14,12 +16,16 @@ import 'package:youapp/app/utils/widgets/form/about_form.dart';
 import 'package:youapp/app/utils/widgets/form/profile_form.dart';
 import 'package:youapp/app/utils/widgets/snackbar/short_snackbar.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
+import 'package:youapp/config/environment/secure_storage_service.dart';
 
-import '../../../../config/routes/page_routes.dart';
-import '../../../utils/constants/app_const.dart';
-import '../../../utils/helper/gradient_gold.dart';
-import '../../../utils/widgets/custom_appbar.dart';
-import '../../../utils/widgets/text/gradient_text.dart';
+import '../../../../../config/routes/page_routes.dart';
+import '../../../../data/models/user.dart';
+import '../../../../utils/constants/app_const.dart';
+import '../../../../utils/helper/calculate_age.dart';
+import '../../../../utils/helper/format_date.dart';
+import '../../../../utils/helper/gradient_color.dart';
+import '../../../../utils/widgets/custom_appbar.dart';
+import '../../../../utils/widgets/text/gradient_text.dart';
 import '../cubit/profile_cubit.dart';
 
 class ProfileView extends StatefulWidget {
@@ -40,7 +46,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void initState() {
-    // setLoginState(false);
+    setLoginState(false);
     super.initState();
     isUpdating = false;
     ProfileView.refreshPage = () {
@@ -79,6 +85,7 @@ class _ProfileViewState extends State<ProfileView> {
             return Scaffold(
               appBar: CustomAppbar(
                 username: "@${state.username}",
+                acionPressed: logout,
               ),
               body: SingleChildScrollView(
                 child: Container(
@@ -86,20 +93,37 @@ class _ProfileViewState extends State<ProfileView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // > TEST
+                      // Wrap(
+                      //   alignment: WrapAlignment.start,
+                      //   runAlignment: WrapAlignment.start,
+                      //   crossAxisAlignment: WrapCrossAlignment.start,
+                      //   runSpacing: 10,
+                      //   spacing: 10,
+                      //   children: List.generate(
+                      //     state.allValues!.length,
+                      //     (index) {
+                      //       return CustomText(
+                      //         text: state.allValues!.toString(),
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
+
+                      // > TEST
+
+                      // > PROFILE PICTURE
                       ProfilePictureCard(
                         username: state.username,
-                        age: state.age,
+                        age: state.age!,
                         // gender: state.gender,
-                        horoscope: state.horoscope,
-                        horoscopeIcon: Icons.font_download,
-                        zodiac: state.zodiac,
-                        zodiacIcon: Icons.book,
-                        // image: "https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                        horoscope: state.horoscope ?? "",
+                        zodiac: state.zodiac ?? "",
                       ),
 
                       const SizedBox(height: LayoutConst.spaceXL),
-                      // AboutForm(),
-                      const SizedBox(height: LayoutConst.spaceXL),
+
+                      // > ABOUT
                       ProfileCard(
                         title: TextConst.about,
                         action: isUpdating
@@ -135,15 +159,23 @@ class _ProfileViewState extends State<ProfileView> {
                                 },
                               ),
                         body: isUpdating
-                            ? AboutForm()
+                            ? AboutForm(
+                                user: User(
+                                name: state.name ?? "",
+                                birthday: state.birthday ?? "",
+                                horoscope: state.horoscope ?? "",
+                                zodiac: state.zodiac ?? "",
+                                height: state.height ?? 0,
+                                weight: state.weight ?? 0,
+                              ))
                             : state.name != ""
                                 ? AboutData(
-                                    birthday: state.birthday,
-                                    age: state.age,
-                                    horoscope: state.horoscope,
-                                    zodiac: state.zodiac,
-                                    height: state.height,
-                                    weight: state.weight,
+                                    birthday: state.birthday ?? "",
+                                    age: state.age ?? 0,
+                                    horoscope: state.horoscope ?? "",
+                                    zodiac: state.zodiac ?? "",
+                                    height: state.height ?? 0,
+                                    weight: state.weight ?? 0,
                                   )
                                 : const CustomText(
                                     text: TextConst.addAbout,
@@ -172,7 +204,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       const SizedBox(height: LayoutConst.spaceXL),
 
-                      // > Interest Card
+                      // > INTEREST
                       ProfileCard(
                         title: TextConst.interest,
                         action: IconButton(
@@ -180,36 +212,28 @@ class _ProfileViewState extends State<ProfileView> {
                             Icons.edit,
                             size: 17,
                           ),
-                          onPressed: () {
-                            // ! POP UP FULL SCREEN FORM
+                          onPressed: () async {
+                            await Navigator.pushNamed(
+                              context,
+                              PageRoutes.updateInterestView,
+                            );
                           },
                         ),
-                        body: state.interests.isNotEmpty
-                            // ? ListView.builder(
-                            //     itemCount: widget.interest!.length,
-                            //     itemBuilder: (context, index) {
-                            //       var item = widget.interest![index];
-                            //       return ProfileChip(
-                            //         blur: false,
-                            //         text: item,
-                            //       );
-                            //     },
-                            //   )
-                            ? Row(
-                                children: [
-                                  CreateInterestChip(
-                                    text: "food",
-                                    onPressed: () {
-                                      print("food delete");
-                                    },
-                                  ),
-                                  InterestChip(
-                                    text: "game",
-                                    onPressed: () {
-                                      print("game delete");
-                                    },
-                                  ),
-                                ],
+                        body: state.interests!.isNotEmpty
+                            ? Wrap(
+                                alignment: WrapAlignment.start,
+                                runAlignment: WrapAlignment.start,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                runSpacing: 10,
+                                spacing: 10,
+                                children: List.generate(
+                                  state.interests!.length,
+                                  (index) {
+                                    return InterestChip(
+                                      text: state.interests![index],
+                                    );
+                                  },
+                                ),
                               )
                             : const CustomText(
                                 text: TextConst.addInterest,
@@ -223,12 +247,13 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             );
           } else if (state is LoadingProfileState) {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.black.withOpacity(0.1),
-              child: const Center(
-                child: CircularProgressIndicator(),
+            return Scaffold(
+              body: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             );
           } else {
@@ -239,10 +264,15 @@ class _ProfileViewState extends State<ProfileView> {
           if (state is ProfileMessage) {
             shortSnackBar(context, state.errorMessage ?? "Gagal Logout");
           } else if (state is ProfileLogOut) {
-            Navigator.of(context).pushNamedAndRemoveUntil(PageRoutes.loginView, (Route<dynamic> route) => false);
+            logout();
           }
         },
       ),
     );
+  }
+
+  logout() {
+    deleteAll();
+    Navigator.of(context).pushNamedAndRemoveUntil(PageRoutes.loginView, (Route<dynamic> route) => false);
   }
 }
