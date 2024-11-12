@@ -13,13 +13,23 @@ class UpdateInterestCubit extends Cubit<UpdateInterestState> {
     this.iUpdateInterestRepository,
   ) : super(InitialUpdateInterestState());
 
-  Future<User> updateInterest() async {
+  Future<void> updateInterest() async {
+    emit(LoadingUpdateInteresState());
     User userData = const User();
-    final ResponseStatus response = await iUpdateInterestRepository.updateInterest(userData);
-    if (response.data != null && response.data.isNotEmpty) {
-      Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
-      userData = User.fromJson(l);
+    try {
+      final ResponseStatus response = await iUpdateInterestRepository.updateInterest(userData);
+      if (response.data != null && response.data.isNotEmpty) {
+        Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
+        userData = User.fromJson(l);
+        emit(SuccessUpdateInteresState());
+      } else {
+        emit(FailureUpdateInterestState(response.message ?? ""));
+      }
+      // return userData;
+    } catch (e) {
+      if (!isClosed) {
+        emit(FailureUpdateInterestState(e.toString()));
+      }
     }
-    return userData;
   }
 }

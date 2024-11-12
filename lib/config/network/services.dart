@@ -44,7 +44,6 @@ class Network {
     );
 
     var accessTokenString = await readByKey(loginAccessToken) ?? "";
-
     dio.interceptors.addAll(
       [
         RequestInterceptor(
@@ -92,6 +91,12 @@ class Network {
 
   Future<ResponseStatus> updateInterest(User data) async {
     RestClient client = await getRestClient();
-    return client.updateProfile(data.toJson());
+    List<String> sendData = data.interests ?? [];
+    debugPrint("----------- send Interest ${sendData.toString()}");
+    Map<String, String> map = {
+      for (var item in sendData) item: item,
+    };
+    debugPrint("=============== send Interest ${sendData.toString()}");
+    return client.updateProfile(map);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youapp/app/modules/profile/home/views/profile_view.dart';
 import 'package:youapp/app/utils/helper/gradient_color.dart';
 import 'package:youapp/app/utils/widgets/chip/create_interest_chip.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
@@ -16,13 +17,13 @@ import '../cubit/update_interest_state.dart';
 import '../repositories/update_interest_repository.dart';
 
 class UpdateInterestView extends StatefulWidget {
-  // final List<String>? interests;
-  final User? user;
+  final List<String>? interests;
+  // final User? user;
 
   const UpdateInterestView({
     Key? key,
-    // this.interests,
-    this.user,
+    this.interests,
+    // this.user,
   }) : super(key: key);
 
   @override
@@ -58,6 +59,8 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
 
   @override
   Widget build(BuildContext context) {
+    var args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
     return BlocProvider<UpdateInterestCubit>(
       create: (context) => UpdateInterestCubit(UpdateInterestRepository(context)),
       child: Scaffold(
@@ -164,23 +167,26 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                                 ),
                               );
                             } else if (state is InitialUpdateInterestState) {
-                              return Wrap(
-                                runSpacing: 10,
-                                spacing: 10,
-                                children: List.generate(
-                                  updateInterests.length,
-                                  (index) {
-                                    return CreateInterestChip(
-                                      text: updateInterests[index],
-                                      onPressed: () {
-                                        setState(() {
-                                          deleteInterest(updateInterests[index]);
-                                        });
-                                      },
-                                    );
-                                  },
-                                ),
-                              );
+                              return args['interests'].isNotEmpty
+                                  ? Wrap(
+                                      runSpacing: 10,
+                                      spacing: 10,
+                                      children: List.generate(
+                                        args['interests'].length,
+                                        (index) {
+                                          return CreateInterestChip(
+                                            // text: updateInterests[index],
+                                            text: "${args['interests'].elementAt(index)}",
+                                            onPressed: () {
+                                              setState(() {
+                                                deleteInterest(updateInterests[index]);
+                                              });
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Container();
                             } else {
                               return Container();
                             }
@@ -205,6 +211,9 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                       //     "interest": updateInterests,
                       //   },
                       // );
+
+                      // Navigator.pop(context);
+                      // ProfileView.refreshPage.call();
                     } else if (state is FailureUpdateInterestState) {
                       if (state.errorMessage != null) {
                         shortSnackBar(context, state.errorMessage!);

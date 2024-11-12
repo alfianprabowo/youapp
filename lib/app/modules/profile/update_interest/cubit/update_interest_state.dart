@@ -6,7 +6,7 @@ class LoadingUpdateInteresState extends UpdateInterestState {}
 
 class FailureUpdateInterestState extends UpdateInterestState {
   final String? errorMessage;
-  FailureUpdateInterestState({this.errorMessage});
+  FailureUpdateInterestState(this.errorMessage);
 
   @override
   String toString() {

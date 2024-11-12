@@ -72,6 +72,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    ProfileView.refreshPage = () {
+      refresh();
+    };
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileCubit>(
@@ -93,29 +96,10 @@ class _ProfileViewState extends State<ProfileView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // > TEST
-                      // Wrap(
-                      //   alignment: WrapAlignment.start,
-                      //   runAlignment: WrapAlignment.start,
-                      //   crossAxisAlignment: WrapCrossAlignment.start,
-                      //   runSpacing: 10,
-                      //   spacing: 10,
-                      //   children: List.generate(
-                      //     state.allValues!.length,
-                      //     (index) {
-                      //       return CustomText(
-                      //         text: state.allValues!.toString(),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-
-                      // > TEST
-
                       // > PROFILE PICTURE
                       ProfilePictureCard(
                         username: state.username,
-                        age: state.age!,
+                        age: state.age ?? 0,
                         // gender: state.gender,
                         horoscope: state.horoscope ?? "",
                         zodiac: state.zodiac ?? "",
@@ -168,7 +152,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 height: state.height ?? 0,
                                 weight: state.weight ?? 0,
                               ))
-                            : state.name != ""
+                            : state.name != null && state.name != ""
                                 ? AboutData(
                                     birthday: state.birthday ?? "",
                                     age: state.age ?? 0,
@@ -182,25 +166,6 @@ class _ProfileViewState extends State<ProfileView> {
                                     size: 14,
                                     weight: FontWeight.w500,
                                   ),
-                        // body: state.name != ""
-                        //     ? isUpdating
-                        //         ? AboutForm()
-                        //         // ! CHANGE TO ABOUT DATA
-                        //         : AboutData(
-                        //             birthday: state.birthday,
-                        //             age: state.age,
-                        //             horoscope: state.horoscope,
-                        //             zodiac: state.zodiac,
-                        //             height: state.height,
-                        //             weight: state.weight,
-                        //           )
-                        //     : isUpdating // ! CHANGE TO EDIT ABOUT DATA
-                        //         ? AboutForm()
-                        //         : const CustomText(
-                        //             text: TextConst.addAbout,
-                        //             size: 14,
-                        //             weight: FontWeight.w500,
-                        //           ),
                       ),
                       const SizedBox(height: LayoutConst.spaceXL),
 
@@ -216,10 +181,14 @@ class _ProfileViewState extends State<ProfileView> {
                             await Navigator.pushNamed(
                               context,
                               PageRoutes.updateInterestView,
+                              arguments: {
+                                'interests': state.interests ?? [],
+                                // 'interests': ['Food', "Car"],
+                              },
                             );
                           },
                         ),
-                        body: state.interests!.isNotEmpty
+                        body: state.interests != null && state.interests!.isNotEmpty
                             ? Wrap(
                                 alignment: WrapAlignment.start,
                                 runAlignment: WrapAlignment.start,
@@ -257,12 +226,33 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             );
           } else {
-            return Container();
+            return Scaffold(
+              body: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("Your session has ended, please re-login"),
+                      const SizedBox(height: LayoutConst.spaceXL),
+                      ElevatedButton(
+                        onPressed: () {
+                          logout();
+                        },
+                        child: const Text(
+                          "Back to Login page",
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
           }
         },
         listener: (context, state) {
           if (state is ProfileMessage) {
-            shortSnackBar(context, state.errorMessage ?? "Gagal Logout");
+            shortSnackBar(context, state.errorMessage ?? "Failed profile load");
           } else if (state is ProfileLogOut) {
             logout();
           }

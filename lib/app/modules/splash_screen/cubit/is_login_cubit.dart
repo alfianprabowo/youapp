@@ -11,8 +11,8 @@ class IsLoginCubit extends Cubit<IsLoginState> {
   void isLogin() async {
     emit(LoadingLoginState());
 
-    var useMasterUsername = await readByKey(loginAccessToken);
-    if (useMasterUsername == null) {
+    var useMasterToken = await readByKey(loginAccessToken);
+    if (useMasterToken == null) {
       Future.delayed(const Duration(seconds: 2), () {
         emit(ResultLoginState(false));
       });

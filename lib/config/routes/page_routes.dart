@@ -18,7 +18,13 @@ class PageRoutes {
       registerView: (context) => const RegisterView(),
       homeView: (context) => const HomeView(),
       profileView: (context) => const ProfileView(),
-      updateInterestView: (context) => const UpdateInterestView(),
+      updateInterestView: (context) {
+        Map<String, dynamic>? argument = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+        return UpdateInterestView(
+          interests: argument?["interests"] ?? [],
+        );
+        // return  UpdateInterestView(),
+      }
     };
   }
 }

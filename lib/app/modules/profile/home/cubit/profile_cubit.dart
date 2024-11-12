@@ -23,46 +23,61 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(LoadingProfileState());
 
     try {
-      final User userData = await loadUserData();
-      int? age;
-      if (userData.birthday == "" || userData.birthday == null) {
-        age = 0;
-      } else {
-        age = calculateAge(userData.birthday!);
+      // final User userData = await loadUserData();
+      User userData = const User();
+      final ResponseStatus response = await profileRepository.getProfile();
+
+      if (response.statusCode != null) {
+        emit(ProfileLogOut());
       }
-      emit(
-        InitialProfileState(
-          username: userData.username ?? "",
-          name: userData.name ?? "",
-          age: age ?? 0,
-          birthday: userData.birthday ?? "",
-          horoscope: userData.horoscope ?? "",
-          horoscopeIcon: "",
-          zodiac: userData.zodiac ?? "",
-          zodiacIcon: "",
-          interests: userData.interests ?? [],
-          height: userData.height ?? 0,
-          weight: userData.weight ?? 0,
-        ),
-      );
+      if (response.data != null && response.data.isNotEmpty && response.message == "Profile has been found successfully") {
+        Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
+        userData = User.fromJson(l);
+        int? age;
+        if (userData.birthday == "" || userData.birthday == null) {
+          age = 0;
+        } else {
+          age = calculateAge(userData.birthday!);
+        }
+        emit(
+          InitialProfileState(
+            username: userData.username ?? "",
+            name: userData.name ?? "",
+            age: age ?? 0,
+            birthday: userData.birthday ?? "",
+            horoscope: userData.horoscope ?? "",
+            horoscopeIcon: "",
+            zodiac: userData.zodiac ?? "",
+            zodiacIcon: "",
+            interests: userData.interests ?? [],
+            height: userData.height ?? 0,
+            weight: userData.weight ?? 0,
+          ),
+        );
+      } else {
+        // emit(ProfileMessage(errorMessage: response.message));
+
+        logout();
+      }
     } catch (e) {
-      emit(ProfileMessage(errorMessage: e.toString()));
+      if (!isClosed) emit(ProfileMessage(errorMessage: e.toString()));
     }
   }
 
-  Future<User> loadUserData() async {
-    User userData = const User();
-    final ResponseStatus response = await profileRepository.getProfile();
-    if (response.data != null && response.data.isNotEmpty) {
-      Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
-      userData = User.fromJson(l);
-    }
-    return userData;
-  }
+  // Future<User> loadUserData() async {
+  // return userData;
+  // }
 
   logout() {
-    deleteAll();
-    emit(ProfileLogOut());
+    emit(LoadingProfileState());
+    try {
+      deleteAll();
+      emit(ProfileLogOut());
+    } catch (e) {
+      debugPrint("$e");
+    }
+    // deleteAll();
+    // emit(ProfileLogOut());
   }
 
   Future<User> createProfile(User user) async {

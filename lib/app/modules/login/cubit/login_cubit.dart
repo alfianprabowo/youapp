@@ -21,10 +21,6 @@ class LoginCubit extends Cubit<LoginState> {
   login(String emailUsername, String password) async {
     emit(LoadingLoginState());
     try {
-      Map<String, String> allValues = await storage.readAll();
-      String jsonString = jsonEncode(allValues);
-      debugPrint("------------- $jsonString");
-
       String email = "";
       String username = "";
       if (emailUsername.isValidEmail) {

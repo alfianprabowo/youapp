@@ -133,14 +133,14 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState?.save();
-                          // BlocProvider.of<LoginCubit>(context).login(
-                          //   "prabowo",
-                          //   "prabowo123",
-                          // );
                           BlocProvider.of<LoginCubit>(context).login(
-                            "bowo",
-                            "bowo1234",
+                            "prabowo",
+                            "prabowo123",
                           );
+                          // BlocProvider.of<LoginCubit>(context).login(
+                          //   "bowo",
+                          //   "bowo1234",
+                          // );
                           // BlocProvider.of<LoginCubit>(context).login(
                           //   "set",
                           //   "test1234",
