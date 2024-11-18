@@ -21,7 +21,7 @@ abstract class RestClient {
     @Body() Map<String, dynamic> data,
   );
 
-  @PATCH("api/updateProfile")
+  @PUT("api/updateProfile")
   Future<ResponseStatus> updateProfile(
     @Body() Map<String, dynamic> data,
   );

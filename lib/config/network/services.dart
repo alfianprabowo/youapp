@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:youapp/app/data/models/interest_list.dart';
 import 'package:youapp/app/utils/constants/app_const.dart';
 import 'package:youapp/config/network/request_interceptor.dart';
 
@@ -51,7 +52,7 @@ class Network {
           // ignore: use_build_context_synchronously
           ctx: context,
         ),
-        ErrorInterceptor(),
+        // ErrorInterceptor(),
       ],
     );
     dio.interceptors.add(prettyDioLogger);
@@ -87,16 +88,5 @@ class Network {
   Future<ResponseStatus> updateProfile(User data) async {
     RestClient client = await getRestClient();
     return client.updateProfile(data.toJson());
-  }
-
-  Future<ResponseStatus> updateInterest(User data) async {
-    RestClient client = await getRestClient();
-    List<String> sendData = data.interests ?? [];
-    debugPrint("----------- send Interest ${sendData.toString()}");
-    Map<String, String> map = {
-      for (var item in sendData) item: item,
-    };
-    debugPrint("=============== send Interest ${sendData.toString()}");
-    return client.updateProfile(map);
   }
 }

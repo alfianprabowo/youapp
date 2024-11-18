@@ -43,6 +43,11 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
   BuildContext? ctxProfile;
   bool isUpdating = false;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController birthdayController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
 
   @override
   void initState() {
@@ -52,6 +57,15 @@ class _ProfileViewState extends State<ProfileView> {
     ProfileView.refreshPage = () {
       Future(() => refresh());
     };
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    birthdayController.dispose();
+    heightController.dispose();
+    weightController.dispose();
   }
 
   refresh({Function()? function}) {
@@ -66,15 +80,14 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     ProfileView.refreshPage = () {
       refresh();
     };
+    String name;
+    String birthday;
+    int height;
+    int weight;
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProfileCubit>(
@@ -108,18 +121,51 @@ class _ProfileViewState extends State<ProfileView> {
                       const SizedBox(height: LayoutConst.spaceXL),
 
                       // > ABOUT
-                      ProfileCard(
-                        title: TextConst.about,
-                        action: isUpdating
-                            ? TextButton(
+
+                      state.isUpdating
+                          ? ProfileCard(
+                              title: TextConst.about,
+                              action: TextButton(
                                 onPressed: () {
-                                  setState(() {
-                                    isUpdating = false;
-                                  });
-                                  if (state.name != "") {
-                                    // BlocProvider.of<ProfileCubit>(context, listen: false).updateProfile(Profile);
-                                  } else {
-                                    // BlocProvider.of<ProfileCubit>(context, listen: false).createProfile(Profile);
+                                  // isUpdating = false;
+                                  if (formKey.currentState!.validate()) {
+                                    formKey.currentState?.save();
+
+                                    name = nameController.text.isNotEmpty ? nameController.text : state.name!;
+                                    birthday = birthdayController.text.isNotEmpty ? birthdayController.text : state.birthday!;
+                                    height = heightController.text.isNotEmpty ? int.parse(heightController.text) : state.height!;
+                                    weight = weightController.text.isNotEmpty ? int.parse(weightController.text) : state.weight!;
+                                    debugPrint("-------- send user name ${name}");
+                                    debugPrint("-------- send user birthday ${birthday}");
+                                    // debugPrint("-------- send user birthday ${state.birthday!}");
+                                    debugPrint("-------- send user height ${height}");
+                                    // debugPrint("-------- send user height ${state.height}");
+                                    debugPrint("-------- send user weight ${weight}");
+                                    // debugPrint("-------- send user weight ${state.weight}");
+
+                                    User data = User(
+                                      name: name,
+                                      birthday: birthday,
+                                      height: height,
+                                      weight: weight,
+                                      interests: state.interests ?? [],
+                                    );
+                                    debugPrint("-------- data user $data");
+                                    if (state.name != "") {
+                                      debugPrint("-------- send user Update");
+                                      // BlocProvider.of<ProfileCubit>(context, listen: false).updateProfile(data);
+                                    } else {
+                                      debugPrint(">>>>>>>>>>>>>>>>>>>>> send user Create");
+                                      // BlocProvider.of<ProfileCubit>(context, listen: false).createProfile(data);
+                                    }
+
+                                    nameController.clear();
+                                    birthdayController.clear();
+                                    heightController.clear();
+                                    weightController.clear();
+                                    setState(() {
+                                      state.isUpdating = false;
+                                    });
                                   }
                                 },
                                 child: GradientText(
@@ -130,43 +176,53 @@ class _ProfileViewState extends State<ProfileView> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              )
-                            : IconButton(
+                              ),
+                              body: AboutForm(
+                                user: User(
+                                  name: state.name ?? "",
+                                  birthday: state.birthday ?? "",
+                                  horoscope: state.horoscope ?? "",
+                                  zodiac: state.zodiac ?? "",
+                                  height: state.height ?? 0,
+                                  weight: state.weight ?? 0,
+                                  interests: state.interests ?? [],
+                                ),
+                                formKey: formKey,
+                                nameController: nameController,
+                                birthdayController: birthdayController,
+                                heightController: heightController,
+                                weightController: weightController,
+                              ),
+                            )
+                          : ProfileCard(
+                              title: TextConst.about,
+                              action: IconButton(
                                 icon: const Icon(
                                   Icons.edit,
                                   size: 17,
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    isUpdating = true;
+                                    state.isUpdating = true;
                                   });
                                 },
                               ),
-                        body: isUpdating
-                            ? AboutForm(
-                                user: User(
-                                name: state.name ?? "",
-                                birthday: state.birthday ?? "",
-                                horoscope: state.horoscope ?? "",
-                                zodiac: state.zodiac ?? "",
-                                height: state.height ?? 0,
-                                weight: state.weight ?? 0,
-                              ))
-                            : state.name != null && state.name != ""
-                                ? AboutData(
-                                    birthday: state.birthday ?? "",
-                                    age: state.age ?? 0,
-                                    horoscope: state.horoscope ?? "",
-                                    zodiac: state.zodiac ?? "",
-                                    height: state.height ?? 0,
-                                    weight: state.weight ?? 0,
-                                  )
-                                : const CustomText(
-                                    text: TextConst.addAbout,
-                                    size: 14,
-                                    weight: FontWeight.w500,
-                                  ),
-                      ),
+                              body: state.name != null && state.name != ""
+                                  ? AboutData(
+                                      birthday: state.birthday ?? "",
+                                      age: state.age ?? 0,
+                                      horoscope: state.horoscope ?? "",
+                                      zodiac: state.zodiac ?? "",
+                                      height: state.height ?? 0,
+                                      weight: state.weight ?? 0,
+                                    )
+                                  : const CustomText(
+                                      text: TextConst.addAbout,
+                                      size: 14,
+                                      weight: FontWeight.w500,
+                                    ),
+                            ),
+
                       const SizedBox(height: LayoutConst.spaceXL),
 
                       // > INTEREST
@@ -182,8 +238,15 @@ class _ProfileViewState extends State<ProfileView> {
                               context,
                               PageRoutes.updateInterestView,
                               arguments: {
-                                'interests': state.interests ?? [],
-                                // 'interests': ['Food', "Car"],
+                                'user': User(
+                                  name: state.name ?? "",
+                                  birthday: state.birthday ?? "",
+                                  horoscope: state.horoscope ?? "",
+                                  zodiac: state.zodiac ?? "",
+                                  height: state.height ?? 0,
+                                  weight: state.weight ?? 0,
+                                  interests: state.interests ?? [],
+                                ),
                               },
                             );
                           },

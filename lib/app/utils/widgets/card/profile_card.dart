@@ -43,6 +43,7 @@ class _ProfileCardState extends State<ProfileCard> {
       ),
       padding: const EdgeInsets.fromLTRB(27.0, 8.0, 16.0, 16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

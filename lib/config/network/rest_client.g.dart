@@ -100,7 +100,7 @@ class _RestClient implements RestClient {
     final _data = <String, dynamic>{};
     _data.addAll(data);
     final _options = _setStreamType<ResponseStatus<dynamic>>(Options(
-      method: 'PATCH',
+      method: 'PUT',
       headers: _headers,
       extra: _extra,
     )

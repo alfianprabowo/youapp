@@ -3,17 +3,18 @@ abstract class ProfileState {}
 class LoadingProfileState extends ProfileState {}
 
 class InitialProfileState extends ProfileState {
-  final String username;
-  final String? name;
-  final int? age;
-  final String? birthday;
-  final String? horoscope;
-  final String? horoscopeIcon;
-  final String? zodiac;
-  final String? zodiacIcon;
-  final List<String>? interests;
-  final int? height;
-  final int? weight;
+  String username;
+  String? name;
+  int? age;
+  String? birthday;
+  String? horoscope;
+  String? horoscopeIcon;
+  String? zodiac;
+  String? zodiacIcon;
+  List<String>? interests;
+  int? height;
+  int? weight;
+  bool isUpdating;
 
   InitialProfileState({
     required this.username,
@@ -27,6 +28,7 @@ class InitialProfileState extends ProfileState {
     this.interests,
     this.height,
     this.weight,
+    this.isUpdating = false,
   });
 }
 
@@ -40,3 +42,15 @@ class ProfileMessage extends ProfileState {
 class ProfileLogOut extends ProfileState {}
 
 class EditProfileState extends ProfileState {}
+
+class SuccessEditProfileState extends ProfileState {}
+
+class FailedEditProfileState extends ProfileState {
+  final String? errorMessage;
+  FailedEditProfileState({this.errorMessage});
+
+  @override
+  String toString() {
+    return 'FailureUpdateProfileState{errorMessage: $errorMessage}';
+  }
+}

@@ -28,6 +28,7 @@ class ProfileForm extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final AutovalidateMode? autoValidate;
   final bool? readOnly;
+  final TextStyle? hintStyle;
 
   const ProfileForm({
     Key? key,
@@ -54,6 +55,7 @@ class ProfileForm extends StatefulWidget {
     this.onSaved,
     this.autoValidate,
     this.readOnly,
+    this.hintStyle,
   }) : super(key: key);
 
   @override
@@ -73,7 +75,7 @@ class _ProfileFormState extends State<ProfileForm> {
       textAlign: TextAlign.right,
       maxLength: widget.maxLength,
       minLines: widget.minLines ?? 1,
-      maxLines: widget.maxLines ?? 1,
+      maxLines: widget.maxLines ?? 2,
       style: const TextStyle(
         color: Colors.white,
         fontSize: 13.0,
@@ -105,13 +107,14 @@ class _ProfileFormState extends State<ProfileForm> {
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         hintTextDirection: TextDirection.rtl,
-        hintStyle: const TextStyle(
-          color: Color.fromRGBO(255, 255, 255, 0.33),
-          fontSize: 13.0,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.normal,
-          letterSpacing: 1.2,
-        ),
+        hintStyle: widget.hintStyle ??
+            const TextStyle(
+              color: Color.fromRGBO(255, 255, 255, 0.33),
+              fontSize: 13.0,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.normal,
+              letterSpacing: 1.2,
+            ),
         filled: true,
         fillColor: const Color.fromRGBO(255, 255, 255, 0.06),
         contentPadding: const EdgeInsets.all(
@@ -120,7 +123,7 @@ class _ProfileFormState extends State<ProfileForm> {
         isDense: true,
         errorStyle: const TextStyle(
           color: Colors.redAccent,
-          fontSize: 12.0,
+          fontSize: 10.0,
           fontWeight: FontWeight.w300,
           fontStyle: FontStyle.normal,
           letterSpacing: 1.2,
@@ -128,6 +131,7 @@ class _ProfileFormState extends State<ProfileForm> {
         errorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.redAccent),
         ),
+        errorMaxLines: 2,
         focusedErrorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.redAccent),
         ),
@@ -144,7 +148,7 @@ class _ProfileFormState extends State<ProfileForm> {
         return null;
       },
       onFieldSubmitted: (value) {
-        if (widget.onSubmitField != null) widget.onSubmitField!();
+        if (widget.onSubmitField != null) widget.onSubmitField!.call(value);
       },
       onTap: () {
         if (widget.onFieldTap != null) widget.onFieldTap!();

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import '../../../../../../config/network/response_status.dart';
 import '../../../../data/models/user.dart';
@@ -13,19 +11,16 @@ class UpdateInterestCubit extends Cubit<UpdateInterestState> {
     this.iUpdateInterestRepository,
   ) : super(InitialUpdateInterestState());
 
-  Future<void> updateInterest() async {
+  Future<void> updateInterest(User data) async {
     emit(LoadingUpdateInteresState());
-    User userData = const User();
+
     try {
-      final ResponseStatus response = await iUpdateInterestRepository.updateInterest(userData);
-      if (response.data != null && response.data.isNotEmpty) {
-        Map<String, dynamic> l = jsonDecode(jsonEncode(response.data));
-        userData = User.fromJson(l);
+      final ResponseStatus response = await iUpdateInterestRepository.updateProfile(data);
+      if (response.data != null && response.data.isNotEmpty && response.message == "Profile has been updated successfully") {
         emit(SuccessUpdateInteresState());
       } else {
         emit(FailureUpdateInterestState(response.message ?? ""));
       }
-      // return userData;
     } catch (e) {
       if (!isClosed) {
         emit(FailureUpdateInterestState(e.toString()));

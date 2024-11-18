@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../environment/secure_storage_service.dart';
+
 class RequestInterceptor extends Interceptor {
   String accessToken;
   BuildContext ctx;
@@ -17,6 +19,8 @@ class RequestInterceptor extends Interceptor {
       options.headers["Accept"] = "*/*";
       options.headers["Access-Control-Allow-Headers"] = "x-access-token";
       options.headers["x-access-token"] = accessToken;
+      options.followRedirects = false;
+      options.validateStatus = (status) => true;
     } catch (e) {
       debugPrint("LogoutException2 : ${e.toString()}");
       handler.reject(
@@ -36,18 +40,20 @@ class RequestInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     try {
-      if ((err.response?.statusCode == 401)) {
+      if (err.response?.statusCode == 401 || err.response?.statusCode == 500) {
         // if ((err.response?.statusCode == 401) && !loginPage) {
-        // deleteAll();
+        deleteAll();
         // Navigator.of(navigatorKey.currentContext!).pushNamedAndRemoveUntil(PageRoutes.loginPass, (Route<dynamic> route) => false);
         // showShortSnackBar(navigatorKey.currentContext!, "Session timeout, please login");
         debugPrint("error ${err.response?.statusCode}");
         handler.resolve(
           Response(
-            data: {"success": false},
+            // data: {"success": false},
+            data: {"message": err.response?.statusMessage},
             requestOptions: RequestOptions(path: err.requestOptions.uri.toString()),
           ),
         );
+        super.onError(err, handler);
       }
     } catch (e) {
       debugPrint("error $e");

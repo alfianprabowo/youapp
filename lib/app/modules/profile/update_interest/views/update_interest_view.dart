@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youapp/app/data/models/interest_list.dart';
 import 'package:youapp/app/modules/profile/home/views/profile_view.dart';
 import 'package:youapp/app/utils/helper/gradient_color.dart';
 import 'package:youapp/app/utils/widgets/chip/create_interest_chip.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
 
-import '../../../../../../config/routes/page_routes.dart';
 import '../../../../data/models/user.dart';
 import '../../../../utils/constants/color_const.dart';
 import '../../../../utils/constants/layout_const.dart';
@@ -17,13 +17,11 @@ import '../cubit/update_interest_state.dart';
 import '../repositories/update_interest_repository.dart';
 
 class UpdateInterestView extends StatefulWidget {
-  final List<String>? interests;
-  // final User? user;
+  final User? user;
 
   const UpdateInterestView({
     Key? key,
-    this.interests,
-    // this.user,
+    this.user,
   }) : super(key: key);
 
   @override
@@ -33,33 +31,34 @@ class UpdateInterestView extends StatefulWidget {
 class _UpdateInterestViewState extends State<UpdateInterestView> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController interestController = TextEditingController();
-  User user = const User();
-  List<String> updateInterests = [
-    // "Food",
-    // "Game",
-    // "Sports",
-    // "Football",
-    // "Outdoor Activity",
-    // "Cook",
-  ];
-  addInterest(String interest) {
-    updateInterests.add(interest);
-  }
-
-  deleteInterest(String interest) {
-    updateInterests.removeWhere(
-      (item) => item == interest,
-    );
-  }
-
-  updateInterest(List<String> data) {
-    updateInterests.addAll(data);
-    user.interests!.addAll(updateInterests);
-  }
+  BuildContext? ctxInterest;
 
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    var user = args['user'];
+    var updateInterests = user.interests;
+
+    addInterest(String interest) {
+      updateInterests!.add(interest);
+    }
+
+    deleteInterest(String interest) {
+      updateInterests!.removeWhere(
+        (item) => item == interest,
+      );
+    }
+
+    @override
+    void initState() {
+      super.initState();
+    }
+
+    @override
+    void dispose() {
+      super.dispose();
+      interestController.dispose();
+    }
 
     return BlocProvider<UpdateInterestCubit>(
       create: (context) => UpdateInterestCubit(UpdateInterestRepository(context)),
@@ -71,7 +70,7 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
           ),
           actions: [
@@ -79,8 +78,10 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
               padding: const EdgeInsets.only(right: 16),
               child: TextButton(
                 onPressed: () {
-                  // ! SEND DATA UPDATE INTEREST
-                  // BlocProvider.of<ProfileCubit>(context).updateProfile(user);
+                  // InterestList list = InterestList(interests: updateInterests);
+                  // user.interests = updateInterests;
+                  // user['interests'] = updateInterests;
+                  BlocProvider.of<UpdateInterestCubit>(ctxInterest!).updateInterest(user);
                 },
                 child: GradientText(
                   text: TextConst.save,
@@ -158,6 +159,8 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                         const SizedBox(height: LayoutConst.spaceL),
                         BlocConsumer<UpdateInterestCubit, UpdateInterestState>(
                           builder: (context, state) {
+                            ctxInterest = context;
+
                             if (state is LoadingUpdateInteresState) {
                               return SizedBox(
                                 height: MediaQuery.of(context).size.height,
@@ -167,16 +170,16 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                                 ),
                               );
                             } else if (state is InitialUpdateInterestState) {
-                              return args['interests'].isNotEmpty
+                              return updateInterests!.isNotEmpty
                                   ? Wrap(
                                       runSpacing: 10,
                                       spacing: 10,
                                       children: List.generate(
-                                        args['interests'].length,
+                                        updateInterests.length,
                                         (index) {
                                           return CreateInterestChip(
                                             // text: updateInterests[index],
-                                            text: "${args['interests'].elementAt(index)}",
+                                            text: "${updateInterests.elementAt(index)}",
                                             onPressed: () {
                                               setState(() {
                                                 deleteInterest(updateInterests[index]);
@@ -193,7 +196,7 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                           },
                           listener: (context, state) {
                             if (state is FailureUpdateInterestState) {
-                              shortSnackBar(context, state.errorMessage ?? "Gagal Logout");
+                              shortSnackBar(context, state.errorMessage ?? "Update failed");
                             }
                           },
                         ),
@@ -212,8 +215,8 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
                       //   },
                       // );
 
-                      // Navigator.pop(context);
-                      // ProfileView.refreshPage.call();
+                      ProfileView.refreshPage.call();
+                      Navigator.pop(context);
                     } else if (state is FailureUpdateInterestState) {
                       if (state.errorMessage != null) {
                         shortSnackBar(context, state.errorMessage!);

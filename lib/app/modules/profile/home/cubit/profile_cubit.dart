@@ -64,20 +64,24 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  updating(bool isUpdating) {
+    // isUpdating => emit(EditProfileState());
+  }
+
   // Future<User> loadUserData() async {
   // return userData;
   // }
 
   logout() {
-    emit(LoadingProfileState());
-    try {
-      deleteAll();
-      emit(ProfileLogOut());
-    } catch (e) {
-      debugPrint("$e");
-    }
-    // deleteAll();
-    // emit(ProfileLogOut());
+    // emit(LoadingProfileState());
+    // try {
+    //   deleteAll();
+    //   emit(ProfileLogOut());
+    // } catch (e) {
+    //   debugPrint("$e");
+    // }
+    deleteAll();
+    emit(ProfileLogOut());
   }
 
   Future<User> createProfile(User user) async {

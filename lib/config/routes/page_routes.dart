@@ -21,7 +21,7 @@ class PageRoutes {
       updateInterestView: (context) {
         Map<String, dynamic>? argument = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
         return UpdateInterestView(
-          interests: argument?["interests"] ?? [],
+          user: argument?["user"] ?? [],
         );
         // return  UpdateInterestView(),
       }

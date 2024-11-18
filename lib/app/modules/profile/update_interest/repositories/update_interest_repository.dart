@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:youapp/app/data/models/interest_list.dart';
 
 import '../../../../../../config/network/response_status.dart';
 import '../../../../../../config/network/services.dart';
 import '../../../../data/models/user.dart';
 
 abstract class IUpdateInterestRepository {
-  Future<ResponseStatus> updateInterest(User user);
+  Future<ResponseStatus> updateProfile(User data);
 }
 
 class UpdateInterestRepository implements IUpdateInterestRepository {
@@ -13,7 +14,7 @@ class UpdateInterestRepository implements IUpdateInterestRepository {
   UpdateInterestRepository(this.context);
 
   @override
-  Future<ResponseStatus> updateInterest(User user) async {
-    return await Network(context).updateInterest(user);
+  Future<ResponseStatus> updateProfile(User data) async {
+    return await Network(context).updateProfile(data);
   }
 }
