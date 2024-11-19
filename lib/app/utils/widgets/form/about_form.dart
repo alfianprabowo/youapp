@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:youapp/app/utils/constants/color_const.dart';
 import 'package:youapp/app/utils/constants/text_const.dart';
 import 'package:youapp/app/utils/helper/format_date.dart';
+import 'package:youapp/app/utils/helper/gradient_color.dart';
+import 'package:youapp/app/utils/widgets/dropdown/gender_dropdown.dart';
 import 'package:youapp/app/utils/widgets/icon/custom_icon.dart';
 import 'package:youapp/app/utils/widgets/text/custom_text.dart';
+import 'package:youapp/app/utils/widgets/text/gradient_text.dart';
 
 import '../../../data/models/user.dart';
 import '../../constants/layout_const.dart';
@@ -34,6 +37,7 @@ class AboutForm extends StatefulWidget {
 class _AboutFormState extends State<AboutForm> {
   DateTime now = DateTime.now();
   late String name;
+  late String gender;
   late String birthday;
   late String horoscope;
   late String zodiac;
@@ -45,6 +49,7 @@ class _AboutFormState extends State<AboutForm> {
   void initState() {
     super.initState();
     name = widget.user!.name ?? "";
+    gender = "";
     birthday = widget.user!.birthday ?? "";
     horoscope = widget.user!.horoscope ?? "";
     zodiac = widget.user!.zodiac ?? "";
@@ -130,7 +135,6 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // widget.user!.name != null && widget.user!.name != ""
                     name != ""
                         ? ProfileForm(
                             hintText: name,
@@ -173,10 +177,6 @@ class _AboutFormState extends State<AboutForm> {
                               });
                             },
                           )
-                    // ProfileForm(
-                    //   hintText: widget.user!.name ?? TextConst.enterName,
-                    //   actionKeyboard: TextInputAction.next,
-                    // ),
                   ],
                 ),
               ),
@@ -205,13 +205,25 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // ! CHANGE TO DROPDOWN
                     ProfileForm(
                       hintText: TextConst.selectGender,
                       readOnly: true,
                       suffixIcon: const Icon(Icons.arrow_drop_down),
-                      onFieldTap: () {
-                        debugPrint("------- gender tapped");
+                      onFieldTap: () async {
+                        await showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(25),
+                            ),
+                          ),
+                          builder: (context) {
+                            return GenderDropdown();
+                          },
+                        );
+                        // if (value != "") {
+                        //   gender = value;
+                        // }
                       },
                     ),
                   ],
@@ -305,7 +317,6 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // widget.user!.horoscope != ""
                     horoscope != ""
                         ? ProfileForm(
                             defaultText: horoscope,
@@ -345,7 +356,6 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // widget.user!.zodiac != ""
                     zodiac != ""
                         ? ProfileForm(
                             defaultText: zodiac,
@@ -385,7 +395,6 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // widget.user!.height != null && widget.user!.height != 0
                     height != 0
                         ? ProfileForm(
                             hintText: height.toString(),
@@ -407,9 +416,7 @@ class _AboutFormState extends State<AboutForm> {
                             },
                             onSaved: (value) {
                               if (value != null || value!.isEmpty) {
-                                debugPrint("=========== height val $value");
-
-                                // height = int.parse(value!);
+                                // height = int.parse(value);
                               }
                             },
                           )
@@ -457,7 +464,6 @@ class _AboutFormState extends State<AboutForm> {
                 flex: 3,
                 child: Column(
                   children: [
-                    // widget.user!.weight != 0 && widget.user!.weight != null
                     weight != 0
                         ? ProfileForm(
                             hintText: weight.toString(),
@@ -479,8 +485,7 @@ class _AboutFormState extends State<AboutForm> {
                             },
                             onSaved: (value) {
                               if (value != null || value!.isEmpty) {
-                                debugPrint("=========== weight val $value");
-                                // weight = int.parse(value!);
+                                // weight = int.parse(value);
                               }
                             },
                           )

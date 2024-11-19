@@ -48,7 +48,7 @@ class _ProfileViewState extends State<ProfileView> {
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
-
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   @override
   void initState() {
     setLoginState(false);
@@ -68,10 +68,10 @@ class _ProfileViewState extends State<ProfileView> {
     weightController.dispose();
   }
 
-  refresh({Function()? function}) {
+  Future<void> refresh({Function()? function}) async {
     if (mounted) {
       if (ctxProfile != null) {
-        BlocProvider.of<ProfileCubit>(ctxProfile!).getProfile();
+        await BlocProvider.of<ProfileCubit>(ctxProfile!).getProfile();
       }
       setState(() {
         function?.call();
@@ -88,12 +88,8 @@ class _ProfileViewState extends State<ProfileView> {
     String birthday;
     int height;
     int weight;
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(ProfileRepository(context)),
-        ),
-      ],
+    return BlocProvider<ProfileCubit>(
+      create: (context) => ProfileCubit(ProfileRepository(context)),
       child: BlocConsumer<ProfileCubit, ProfileState>(
         builder: (context, state) {
           ctxProfile = context;
@@ -103,177 +99,173 @@ class _ProfileViewState extends State<ProfileView> {
                 username: "@${state.username}",
                 acionPressed: logout,
               ),
-              body: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(LayoutConst.spaceL),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // > PROFILE PICTURE
-                      ProfilePictureCard(
-                        username: state.username,
-                        age: state.age ?? 0,
-                        // gender: state.gender,
-                        horoscope: state.horoscope ?? "",
-                        zodiac: state.zodiac ?? "",
-                      ),
+              body: RefreshIndicator(
+                onRefresh: refresh,
+                key: refreshIndicatorKey,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    padding: const EdgeInsets.all(LayoutConst.spaceL),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // > PROFILE PICTURE
+                        ProfilePictureCard(
+                          username: state.username,
+                          age: state.age ?? 0,
+                          // gender: state.gender,
+                          horoscope: state.horoscope ?? "",
+                          zodiac: state.zodiac ?? "",
+                        ),
 
-                      const SizedBox(height: LayoutConst.spaceXL),
+                        const SizedBox(height: LayoutConst.spaceXL),
 
-                      // > ABOUT
+                        // > ABOUT
 
-                      state.isUpdating
-                          ? ProfileCard(
-                              title: TextConst.about,
-                              action: TextButton(
-                                onPressed: () {
-                                  // isUpdating = false;
-                                  if (formKey.currentState!.validate()) {
-                                    formKey.currentState?.save();
+                        state.isUpdating
+                            ? ProfileCard(
+                                title: TextConst.about,
+                                action: TextButton(
+                                  onPressed: () async {
+                                    if (formKey.currentState!.validate()) {
+                                      formKey.currentState?.save();
 
-                                    name = nameController.text.isNotEmpty ? nameController.text : state.name!;
-                                    birthday = birthdayController.text.isNotEmpty ? birthdayController.text : state.birthday!;
-                                    height = heightController.text.isNotEmpty ? int.parse(heightController.text) : state.height!;
-                                    weight = weightController.text.isNotEmpty ? int.parse(weightController.text) : state.weight!;
-                                    debugPrint("-------- send user name ${name}");
-                                    debugPrint("-------- send user birthday ${birthday}");
-                                    // debugPrint("-------- send user birthday ${state.birthday!}");
-                                    debugPrint("-------- send user height ${height}");
-                                    // debugPrint("-------- send user height ${state.height}");
-                                    debugPrint("-------- send user weight ${weight}");
-                                    // debugPrint("-------- send user weight ${state.weight}");
+                                      name = nameController.text.isNotEmpty ? nameController.text : state.name!;
+                                      birthday = birthdayController.text.isNotEmpty ? birthdayController.text : state.birthday!;
+                                      height = heightController.text.isNotEmpty ? int.parse(heightController.text) : state.height!;
+                                      weight = weightController.text.isNotEmpty ? int.parse(weightController.text) : state.weight!;
 
-                                    User data = User(
-                                      name: name,
-                                      birthday: birthday,
-                                      height: height,
-                                      weight: weight,
-                                      interests: state.interests ?? [],
-                                    );
-                                    debugPrint("-------- data user $data");
-                                    if (state.name != "") {
-                                      debugPrint("-------- send user Update");
-                                      // BlocProvider.of<ProfileCubit>(context, listen: false).updateProfile(data);
-                                    } else {
-                                      debugPrint(">>>>>>>>>>>>>>>>>>>>> send user Create");
-                                      // BlocProvider.of<ProfileCubit>(context, listen: false).createProfile(data);
+                                      User data = User(
+                                        name: name,
+                                        birthday: birthday,
+                                        height: height,
+                                        weight: weight,
+                                        interests: state.interests ?? [],
+                                      );
+
+                                      if (state.name != "" || state.birthday != "" || state.height != 0 || state.weight != 0) {
+                                        await BlocProvider.of<ProfileCubit>(context, listen: false).updateProfile(data);
+                                      } else {
+                                        await BlocProvider.of<ProfileCubit>(context, listen: false).createProfile(data);
+                                      }
+
+                                      nameController.clear();
+                                      birthdayController.clear();
+                                      heightController.clear();
+                                      weightController.clear();
+                                      setState(() {
+                                        state.isUpdating = false;
+                                      });
+                                      await ProfileView.refreshPage.call();
                                     }
-
-                                    nameController.clear();
-                                    birthdayController.clear();
-                                    heightController.clear();
-                                    weightController.clear();
-                                    setState(() {
-                                      state.isUpdating = false;
-                                    });
-                                  }
-                                },
-                                child: GradientText(
-                                  text: TextConst.saveUpdate,
-                                  gradient: gradientGold,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                                  },
+                                  child: GradientText(
+                                    text: TextConst.saveUpdate,
+                                    gradient: gradientGold,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              body: AboutForm(
-                                user: User(
-                                  name: state.name ?? "",
-                                  birthday: state.birthday ?? "",
-                                  horoscope: state.horoscope ?? "",
-                                  zodiac: state.zodiac ?? "",
-                                  height: state.height ?? 0,
-                                  weight: state.weight ?? 0,
-                                  interests: state.interests ?? [],
-                                ),
-                                formKey: formKey,
-                                nameController: nameController,
-                                birthdayController: birthdayController,
-                                heightController: heightController,
-                                weightController: weightController,
-                              ),
-                            )
-                          : ProfileCard(
-                              title: TextConst.about,
-                              action: IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  size: 17,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    state.isUpdating = true;
-                                  });
-                                },
-                              ),
-                              body: state.name != null && state.name != ""
-                                  ? AboutData(
-                                      birthday: state.birthday ?? "",
-                                      age: state.age ?? 0,
-                                      horoscope: state.horoscope ?? "",
-                                      zodiac: state.zodiac ?? "",
-                                      height: state.height ?? 0,
-                                      weight: state.weight ?? 0,
-                                    )
-                                  : const CustomText(
-                                      text: TextConst.addAbout,
-                                      size: 14,
-                                      weight: FontWeight.w500,
-                                    ),
-                            ),
-
-                      const SizedBox(height: LayoutConst.spaceXL),
-
-                      // > INTEREST
-                      ProfileCard(
-                        title: TextConst.interest,
-                        action: IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 17,
-                          ),
-                          onPressed: () async {
-                            await Navigator.pushNamed(
-                              context,
-                              PageRoutes.updateInterestView,
-                              arguments: {
-                                'user': User(
-                                  name: state.name ?? "",
-                                  birthday: state.birthday ?? "",
-                                  horoscope: state.horoscope ?? "",
-                                  zodiac: state.zodiac ?? "",
-                                  height: state.height ?? 0,
-                                  weight: state.weight ?? 0,
-                                  interests: state.interests ?? [],
-                                ),
-                              },
-                            );
-                          },
-                        ),
-                        body: state.interests != null && state.interests!.isNotEmpty
-                            ? Wrap(
-                                alignment: WrapAlignment.start,
-                                runAlignment: WrapAlignment.start,
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                runSpacing: 10,
-                                spacing: 10,
-                                children: List.generate(
-                                  state.interests!.length,
-                                  (index) {
-                                    return InterestChip(
-                                      text: state.interests![index],
-                                    );
-                                  },
+                                body: AboutForm(
+                                  user: User(
+                                    name: state.name ?? "",
+                                    birthday: state.birthday ?? "",
+                                    horoscope: state.horoscope ?? "",
+                                    zodiac: state.zodiac ?? "",
+                                    height: state.height ?? 0,
+                                    weight: state.weight ?? 0,
+                                    interests: state.interests ?? [],
+                                  ),
+                                  formKey: formKey,
+                                  nameController: nameController,
+                                  birthdayController: birthdayController,
+                                  heightController: heightController,
+                                  weightController: weightController,
                                 ),
                               )
-                            : const CustomText(
-                                text: TextConst.addInterest,
-                                size: 14,
-                                weight: FontWeight.w500,
+                            : ProfileCard(
+                                title: TextConst.about,
+                                action: IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    size: 17,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      state.isUpdating = true;
+                                    });
+                                  },
+                                ),
+                                body: state.name != null && state.name != ""
+                                    ? AboutData(
+                                        birthday: state.birthday ?? "",
+                                        age: state.age ?? 0,
+                                        horoscope: state.horoscope ?? "",
+                                        zodiac: state.zodiac ?? "",
+                                        height: state.height ?? 0,
+                                        weight: state.weight ?? 0,
+                                      )
+                                    : const CustomText(
+                                        text: TextConst.addAbout,
+                                        size: 14,
+                                        weight: FontWeight.w500,
+                                      ),
                               ),
-                      ),
-                    ],
+
+                        const SizedBox(height: LayoutConst.spaceXL),
+
+                        // > INTEREST
+                        ProfileCard(
+                          title: TextConst.interest,
+                          action: IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              size: 17,
+                            ),
+                            onPressed: () async {
+                              await Navigator.pushNamed(
+                                context,
+                                PageRoutes.updateInterestView,
+                                arguments: {
+                                  'user': User(
+                                    name: state.name ?? "",
+                                    birthday: state.birthday ?? "",
+                                    horoscope: state.horoscope ?? "",
+                                    zodiac: state.zodiac ?? "",
+                                    height: state.height ?? 0,
+                                    weight: state.weight ?? 0,
+                                    interests: state.interests ?? [],
+                                  ),
+                                },
+                              );
+                            },
+                          ),
+                          body: state.interests != null && state.interests!.isNotEmpty
+                              ? Wrap(
+                                  alignment: WrapAlignment.start,
+                                  runAlignment: WrapAlignment.start,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  runSpacing: 10,
+                                  spacing: 10,
+                                  children: List.generate(
+                                    state.interests!.length,
+                                    (index) {
+                                      return InterestChip(
+                                        text: state.interests![index],
+                                      );
+                                    },
+                                  ),
+                                )
+                              : const CustomText(
+                                  text: TextConst.addInterest,
+                                  size: 14,
+                                  weight: FontWeight.w500,
+                                ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

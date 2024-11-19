@@ -73,13 +73,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   // }
 
   logout() {
-    // emit(LoadingProfileState());
-    // try {
-    //   deleteAll();
-    //   emit(ProfileLogOut());
-    // } catch (e) {
-    //   debugPrint("$e");
-    // }
     deleteAll();
     emit(ProfileLogOut());
   }

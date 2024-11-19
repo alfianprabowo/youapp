@@ -43,8 +43,6 @@ class LoginCubit extends Cubit<LoginState> {
       } else {
         Map token = {"accessToken": responseStatus.accessToken};
         await writeAllValue(token);
-        var accesss = await readByKey(loginAccessToken);
-        debugPrint(">>>>>>>>>>> login token $accesss");
 
         emit(SuccessLoginState(successMessage: responseStatus.message ?? ""));
       }

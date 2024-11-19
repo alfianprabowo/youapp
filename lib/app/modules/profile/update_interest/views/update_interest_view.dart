@@ -34,6 +34,17 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
   BuildContext? ctxInterest;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    interestController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     var user = args['user'];
@@ -49,17 +60,6 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
       );
     }
 
-    @override
-    void initState() {
-      super.initState();
-    }
-
-    @override
-    void dispose() {
-      super.dispose();
-      interestController.dispose();
-    }
-
     return BlocProvider<UpdateInterestCubit>(
       create: (context) => UpdateInterestCubit(UpdateInterestRepository(context)),
       child: Scaffold(
@@ -71,17 +71,17 @@ class _UpdateInterestViewState extends State<UpdateInterestView> {
             ),
             onPressed: () {
               Navigator.pop(context);
+              ProfileView.refreshPage.call();
             },
           ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: TextButton(
-                onPressed: () {
-                  // InterestList list = InterestList(interests: updateInterests);
+                onPressed: () async {
                   // user.interests = updateInterests;
                   // user['interests'] = updateInterests;
-                  BlocProvider.of<UpdateInterestCubit>(ctxInterest!).updateInterest(user);
+                  await BlocProvider.of<UpdateInterestCubit>(ctxInterest!).updateInterest(user);
                 },
                 child: GradientText(
                   text: TextConst.save,

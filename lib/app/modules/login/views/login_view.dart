@@ -141,14 +141,14 @@ class _LoginViewState extends State<LoginView> {
                           //   "bowo",
                           //   "bowo1234",
                           // );
-                          BlocProvider.of<LoginCubit>(context).login(
-                            "set",
-                            "test1234",
-                          );
                           // BlocProvider.of<LoginCubit>(context).login(
-                          //   "hi",
-                          //   "12345678",
+                          //   "set",
+                          //   "test1234",
                           // );
+                          BlocProvider.of<LoginCubit>(context).login(
+                            "hi",
+                            "12345678",
+                          );
                           // BlocProvider.of<LoginCubit>(context).login(
                           //   email,
                           //   password,
